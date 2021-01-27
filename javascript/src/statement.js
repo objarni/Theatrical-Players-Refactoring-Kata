@@ -1,43 +1,49 @@
 
-function statement (invoice, plays) {
-    let totalAmount = 0;
-    let volumeCredits = 0;
-    let result = `Statement for ${invoice.customer}\n`;
-    const format = new Intl.NumberFormat("en-US",
-        { style: "currency", currency: "USD",
-            minimumFractionDigits: 2 }).format;
+//build a statement from invoice   and plays
+function stmt (inv, map) {
+   let TA = 0;
+    let credds = 0;
+    // Statement for invoice customer
+    let r = `Statement for ${inv.customer}\n`;const format = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
 
-    for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
-        let thisAmount = 0;
-        switch (play.type) {
+    for (let perf of inv.performances) {
+    const play = map[perf.playID];
+    let amnt = 0;
+    switch (play.type) {
             case "tragedy":
-                thisAmount = 40000;
-                if (perf.audience > 30) {
-                    thisAmount += 1000 * (perf.audience - 30);
-                }
-                break;
+            amnt = 40000;
+    if (perf.audience > 30) {
+        amnt += 1000 * (perf.audience - 30);
+    }
+            break;
             case "comedy":
-                thisAmount = 30000;
-                if (perf.audience > 20) {
-                    thisAmount += 10000 + 500 * (perf.audience - 20);
-                }
-                thisAmount += 300 * perf.audience;
+            amnt = 30000;
+                if (perf.audience > 20)
+                    {
+                    amnt += 10000 +500* (perf.audience-20);
+                    }
+                amnt += 300 * perf.audience;
                 break;
             default:
                 throw new Error(`unknown type: ${play.type}`);
-        }
-        // add volume credits
-        volumeCredits += Math.max(perf.audience - 30, 0);
-        // add extra credit for every ten comedy attendees
-        if ("comedy" === play.type) volumeCredits += Math.floor(perf.audience / 5);
-        // print line for this order
-        result += ` ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
-        totalAmount += thisAmount;
     }
-    result += `Amount owed is ${format(totalAmount/100)}\n`;
-    result += `You earned ${volumeCredits} credits\n`;
-    return result;
-}
+    // add max of audience minus 30 and 0
+    credds += Math.max(perf.audience - 30, 0);
+    // if ("comedy" === play.type) credds += Math.floor(perf.audience / 5);
+    // result += ` ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
+    // TA += thisAmount;
+    // }
+    // add extra credit for every ten comedy attendees
+    if ("comedy" === play.type) credds += Math.floor(perf.audience / 5);
+    // print
+    r += ` ${play.name}: ${format(amnt/100)} (${perf.audience} seats)\n`;
+    TA += amnt;
+    }
+    r +=`Amount owed is ${format(TA/100)}\n`;
+    r += `You earned ${credds} credits\n`;
+    return r;
+    }
 
-module.exports = statement;
+
+    // export stmt
+    module.exports = stmt;
