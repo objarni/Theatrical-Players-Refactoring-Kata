@@ -17,6 +17,7 @@ to improve statement.js:
 
   - rename identifier
   - remove commented out code
+  - add or remove curly braces { } around code
   - improve comment
   - format code
   - extract and inline variable
